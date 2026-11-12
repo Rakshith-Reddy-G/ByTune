@@ -3656,6 +3656,43 @@ html.reduce-motion .ob-way-go {
   will-change: transform;
 }
 
+/* ---------- fullscreen queue chevrons ----------
+   Only visible in OS fullscreen: ▲/▼ at the top open and close the queue
+   rail so the artwork can take the whole screen. */
+.fs-chevrons {
+  display: flex;
+  gap: 10px;
+}
+.fs-chev {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.10);
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+.fs-chev.up {
+  transform: rotate(180deg);
+}
+.fs-chev:hover {
+  background: rgba(255, 255, 255, 0.18);
+}
+
+/* OS fullscreen: the overlay goes full bleed with no header gaps. */
+.fs-fullscreen {
+  /* overflow-hidden already on root; nothing else needed — the container
+     already fills the viewport. */
+}
+
+/* ---------- trackpad swipe arrow ----------
+
+
 /* ---------- trackpad swipe arrow ----------
    Chrome's history arrow (SwipeArrow, lib/swipeNav): out of the panel's edge
    in step with a two-finger swipe, white with a pop and a ripple once the

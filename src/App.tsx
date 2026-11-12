@@ -495,7 +495,7 @@ export default function App() {
             </>
           )}
         </main>
-        <RightRail />
+        {viewName !== "settings" && <RightRail />}
       </div>
       <PlayerBar />
       <NowPlaying />
