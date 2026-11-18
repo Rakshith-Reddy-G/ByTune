@@ -26,7 +26,7 @@
  */
 import { useEffect, useLayoutEffect, useMemo, useRef, useState, type CSSProperties, type RefObject } from "react";
 import { flushSync } from "react-dom";
-import { ChevronDown, ChevronUp, Heart, Maximize2, Minimize2, Music2 } from "lucide-react";
+import { Heart, Minimize2, Music2 } from "lucide-react";
 import { PlayerBar } from "./PlayerBar";
 import { QueuePanel } from "./RightRail";
 import { LyricsView } from "./SyncedLyrics";
@@ -165,7 +165,7 @@ function FsVisualizer({ playing }: { playing: boolean }) {
   return (
     <div
       aria-hidden
-      className={`fs-viz flex h-9 w-[min(300px,72%)] items-center justify-center gap-[5px] ${
+      className={`fs-viz self-center flex h-10 w-[min(320px,76%)] items-center justify-center gap-[5px] ${
         playing ? "is-playing" : ""
       }`}
     >
@@ -269,11 +269,25 @@ function FsLyrics({
   );
 }
 
+/** Artwork left rail for the normal three-pane application shell. */
+export function NowPlayingArtwork() {
+  const track = usePlayer(shownTrack);
+  const playing = usePlayer((s) => s.playing);
+  const close = useUI((s) => s.toggleNowPlaying);
+  const palette = useArtworkPalette(track?.thumb ?? null);
+  return <aside className="w-[328px] shrink-0 flex flex-col min-h-0"><section className="relative flex-1 min-h-0 overflow-hidden rounded-2xl border border-white/10 p-4 flex flex-col items-center justify-center" style={{ background: `linear-gradient(165deg, rgb(${palette.background}), #121214 72%)` }}>
+    <button onClick={close} className="absolute right-3 top-3 grid h-8 w-8 place-items-center rounded-full text-white/60 hover:bg-white/10 hover:text-white" title="Return to Home" aria-label="Return to Home">×</button>
+    <div className="relative w-full aspect-square max-w-[280px] overflow-hidden rounded-xl bg-white/[0.06] shadow-art art-hairline">{track?.thumb ? <img src={upgradeArtwork(track.thumb, 800)} alt={`Artwork for ${track.title}`} className="h-full w-full object-cover animate-art-in" /> : <div className="grid h-full place-items-center"><Music2 className="h-12 w-12 text-white/35" /></div>}</div>
+    <div className="mt-6 w-full text-center"><div className="font-display text-[25px] font-extrabold tracking-[-0.03em] text-white"><FitText mode="auto" text={track ? shortTitle(track.title) : "Nothing playing"} full={track?.title} /></div><div className="mt-1 text-[14px] text-white/60"><FitText mode="auto" text={track?.artist ?? "Choose a song to begin"} /></div></div>
+    <div className={`mt-10 flex w-full justify-center ${playing ? "opacity-70" : "opacity-30"}`}><FsVisualizer playing={playing} /></div>
+  </section></aside>;
+}
+
 /* ================================================================ the view */
 
 export function NowPlaying() {
-  const open = useUI((s) => s.nowPlayingOpen);
-  const close = useUI((s) => s.toggleNowPlaying);
+  const open = useUI((s) => s.cinematicOpen);
+  const close = useUI((s) => s.toggleCinematic);
 
   /**
    * Fullscreen transition state machine — enter/exit choreography without
@@ -477,46 +491,10 @@ export function NowPlaying() {
           </div>
         </div>
 
-        {/* Header — close (mobile: the iOS sheet-grabber). Idle, it fades
-            and gives up its height. */}
+        {/* The inactive chevrons were removed from the cinematic player. */}
         <div className={`fs-chrome fs-head relative h-14 shrink-0 flex items-center px-3 ${osFs ? "justify-between" : ""}`}>
-          <button
-            onClick={close}
-            title="Close (Esc)"
-            aria-label="Close Now Playing"
-            className="relative z-10 p-2 -ml-1 rounded-full text-white/75 hover:text-white hover:bg-white/[0.08] transition-colors"
-          >
-            <ChevronDown className="w-5 h-5" />
-          </button>
           {osFs && (
-            <>
-              <div className="fs-chevrons">
-                <button
-                  onClick={() => setQueueOpen(false)}
-                  title="Hide queue"
-                  aria-label="Hide queue"
-                  className="fs-chev up"
-                >
-                  ▲
-                </button>
-                <button
-                  onClick={() => setQueueOpen(true)}
-                  title="Show queue"
-                  aria-label="Show queue"
-                  className="fs-chev"
-                >
-                  ▼
-                </button>
-              </div>
-              <button
-                onClick={toggleFullscreen}
-                title={osFs ? "Exit full screen" : "Enter full screen"}
-                aria-label={osFs ? "Exit full screen" : "Enter full screen"}
-                className="relative z-10 p-2 -mr-1 rounded-full text-white/75 hover:text-white hover:bg-white/[0.08] transition-colors"
-              >
-                {osFs ? <Minimize2 className="w-5 h-5" /> : <Maximize2 className="w-5 h-5" />}
-              </button>
-            </>
+            <button onClick={toggleFullscreen} title="Exit full screen" aria-label="Exit full screen" className="relative z-10 p-2 -mr-1 rounded-full text-white/75 hover:text-white hover:bg-white/[0.08] transition-colors"><Minimize2 className="w-5 h-5" /></button>
           )}
         </div>
 
