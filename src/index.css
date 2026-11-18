@@ -1474,6 +1474,30 @@ html.reduce-blur .top-fade {
   -webkit-backdrop-filter: none;
   background: linear-gradient(180deg, rgba(0, 0, 0, 0.92), transparent);
 }
+html.reduce-blur .cover-glow-art {
+  filter: blur(24px) saturate(1.2) brightness(var(--cover-glow-brightness, 1)) !important;
+}
+html.reduce-blur .blur-\[100px\],
+html.reduce-blur .blur-\[90px\] {
+  filter: blur(24px) !important;
+}
+
+/* ---------- window hidden (background) ----------
+   When ByTune sits idle behind another window or hidden in the Dock / tray,
+   music keeps playing but nothing needs to animate or blur. Pause the
+   continuous decorative loops and lighten the heaviest blur filters so the
+   renderer stops drawing frames no one sees. The user's own
+   reduce-animation / reduce-blur settings still win when the window shows
+   again — this class only applies while hidden. */
+html.in-background .fs-art-wrap.fs-art-breathe,
+html.in-background .fs-viz.is-playing .fs-viz-bar,
+html.in-background [class*="animate-drift"],
+html.in-background [class*="cover-wall-drift"] {
+  animation-play-state: paused !important;
+}
+html.in-background .cover-glow-art {
+  filter: blur(24px) saturate(1.2) brightness(var(--cover-glow-brightness, 1)) !important;
+}
 
 /* ---------- liquid glass off ----------
    Same chrome, no refraction: solid fills keep hierarchy without blur. */

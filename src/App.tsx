@@ -424,6 +424,23 @@ export default function App() {
     return useSettings.persist.onFinishHydration(ready);
   }, [session.loaded]);
 
+  // Window hidden (macOS close-to-hide, Windows tray, another app in front):
+  // pause continuous decorative animations and lighten blur so the renderer
+  // stops drawing frames no one sees while music keeps playing. Restore on
+  // show so the user's own reduce-animation / reduce-blur settings take over.
+  useEffect(() => {
+    const root = document.documentElement;
+    const onHide = (): void => root.classList.add("in-background");
+    const onShow = (): void => root.classList.remove("in-background");
+    const onChange = (): void => (document.hidden ? onHide() : onShow());
+    document.addEventListener("visibilitychange", onChange);
+    if (document.hidden) onHide();
+    return () => {
+      document.removeEventListener("visibilitychange", onChange);
+      root.classList.remove("in-background");
+    };
+  }, []);
+
   useKeyboardShortcuts();
   useAmbient();
   useAppearance();
